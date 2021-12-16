@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xqy.dao.itemMapper">
+    <resultMap id="BaseResultMap" type="com.xqy.domain.item" >
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="owner_account" jdbcType="VARCHAR" property="owner_account"/>
+        <result column="name" jdbcType="VARCHAR" property="name"/>
+        <result column="perPrice" jdbcType="DOUBLE" property="perPrice"/>
+        <result column="record_id" jdbcType="INTEGER" property="record_id"/>
+        <result column="total" jdbcType="INTEGER" property="total"/>
+        <result column="last" jdbcType="INTEGER" property="last"/>
+        <result column="onsale" jdbcType="INTEGER" property="onsale"/>
+        <result column="user_rank" jdbcType="DOUBLE" property="user_rank"/>
+    </resultMap>
+    <select id="itemDetail" resultMap="BaseResultMap">
+        select * from item where id = #{id}
+    </select>
+    <select id="add" resultType="com.xqy.domain.record_list">
+        insert into item(owner_account, perPrice, item_name, record_id, total, last,onsale) values (#{owner_account},#{perPrice},#{item_name},#{record_id},#{total},#{total},1)
+    </select>
+    <select id="itemOfOwnner" resultMap="BaseResultMap">
+        select * from item where owner_account = #{account}
+    </select>
+    <select id="itemofname" resultMap="BaseResultMap">
+        select * from item where owner_account = #{account} and item_name like concat('%',#{name},'%' )
+    </select>
+    <select id="itemShop" resultMap="BaseResultMap">
+        select * from item i , user u  where item_name like concat('%',#{name},'%' ) and onsale = 1 and i.owner_account=u.user_account
+    </select>
+    <update id="offsale" parameterType="com.xqy.domain.item">
+        UPDATE item SET onsale = 0  WHERE id = #{id}
+    </update>
+
+</mapper>

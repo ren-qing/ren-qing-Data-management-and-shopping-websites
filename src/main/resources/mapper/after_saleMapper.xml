@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xqy.dao.after_saleMapper">
+    <resultMap id="BaseResultMap" type="com.xqy.domain.after_sale" >
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="traid_id" jdbcType="INTEGER" property="traid_id"/>
+        <result column="detail_description" jdbcType="VARCHAR" property="detail_description"/>
+        <result column="after_sale_rank" jdbcType="INTEGER" property="after_sale_rank"/>
+        <result column="require" jdbcType="VARCHAR" property="require"/>
+    </resultMap>
+
+    <select id="add" resultType="com.xqy.domain.after_sale">
+        insert into after_sale(traid_id, detail_description, after_sale_rank, `require`) values (#{traid_id},#{detail_description},#{after_sale_rank},#{require})
+    </select>
+
+
+    <select id="find" resultType="java.lang.Integer">
+        select count(*) from after_sale where traid_id = #{traid_id}
+    </select>
+
+    <select id="selectAll" resultMap="BaseResultMap">
+        select * from after_sale where after_sale.require like CONCAT(#{require})
+    </select>
+
+    <update id="returnmoney" parameterType="com.xqy.domain.after_sale">
+        UPDATE after_sale SET  `require` = '完成退款' WHERE id = #{id}
+    </update>
+
+</mapper>

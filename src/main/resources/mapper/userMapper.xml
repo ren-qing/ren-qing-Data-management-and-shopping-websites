@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xqy.dao.userMapper">
+    <resultMap id="BaseResultMap" type="com.xqy.domain.user" >
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="user_name" jdbcType="VARCHAR" property="user_name"/>
+        <result column="user_account" jdbcType="VARCHAR" property="user_account"/>
+        <result column="user_password" jdbcType="VARCHAR" property="user_password"/>
+        <result column="user_wallet" jdbcType="DOUBLE" property="user_wallet"/>
+        <result column="user_rank" jdbcType="DOUBLE" property="user_rank"/>
+    </resultMap>
+    <select id="verifyPassword" resultType="java.lang.Integer">
+        select count(*) from user where user_account = #{account} and user_password =#{password}
+    </select>
+    <select id="haveone" resultType="java.lang.Integer">
+        select count(*) from user where user_account = #{account}
+    </select>
+    <select id="getWallet" resultType="java.lang.Double">
+        select user_wallet from user where user_account = #{account}
+    </select>
+    <select id="getRank" resultType="java.lang.Double">
+        select user_rank from user where user_account = #{account}
+    </select>
+    <update id="changePass" parameterType="com.xqy.domain.user">
+        UPDATE user SET  user_password = #{password} WHERE user_account = #{account}
+    </update>
+    <select id="register" resultType="com.xqy.domain.user">
+        insert into user(user_name, user_account, user_password, user_wallet, user_rank) values (#{name},#{account},#{pass},0,5)
+    </select>
+
+    <update id="addmoneyto" parameterType="com.xqy.domain.user">
+        UPDATE user SET  user_wallet = user_wallet + #{money} WHERE user_account = #{account}
+    </update>
+    <update id="deletemoneyto" parameterType="com.xqy.domain.user">
+        UPDATE user SET  user_wallet = user_wallet - #{money} WHERE user_account = #{account} and user_wallet>=#{money}
+    </update>
+
+    <select id="ifmuch" resultType="java.lang.Integer">
+        select count(*) from user where user_account = #{account} and user_wallet >= #{money}
+    </select>
+
+</mapper>

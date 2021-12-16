@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xqy.dao.tradeMapper">
+    <resultMap id="BaseResultMap" type="com.xqy.domain.trade">
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="saleman_account" jdbcType="VARCHAR" property="saleman_account"/>
+        <result column="buyer_account" jdbcType="VARCHAR" property="buyer_account"/>
+        <result column="item_id" jdbcType="INTEGER" property="item_id"/>
+        <result column="time" jdbcType="TIMESTAMP" property="time"/>
+        <result column="quantity" jdbcType="INTEGER" property="quantity"/>
+        <result column="finalPries" jdbcType="DOUBLE" property="finalPries"/>
+        <result column="user_name" jdbcType="VARCHAR" property="user.user_name"/>
+        <result column="item_name" jdbcType="VARCHAR" property="item.item_name"/>
+    </resultMap>
+    <select id="buyedList" resultMap="BaseResultMap">
+        select t.*, u.user_name, i.item_name from trade t,item i,user u where t.buyer_account = #{buyer_account} and t.item_id=i.id and t.saleman_account=u.user_account
+    </select>
+    <select id="salededList" resultMap="BaseResultMap">
+        select t.*, u.user_name, i.item_name from trade t,item i,user u where t.saleman_account = #{saleman_account} and t.item_id=i.id and t.buyer_account=u.user_account
+    </select>
+    <select id="allinbyname" resultMap="BaseResultMap">
+        select t.*, u.user_name, i.item_name from trade t,item i,user u where t.buyer_account = #{account} and t.item_id=i.id and t.saleman_account=u.user_account and i.item_name LIKE CONCAT('%',#{name},'%' )
+    </select>
+    <select id="alloutbyname" resultMap="BaseResultMap">
+        select t.*, u.user_name, i.item_name from trade t,item i,user u where t.saleman_account = #{account} and t.item_id=i.id and t.buyer_account=u.user_account and i.item_name LIKE CONCAT('%',#{name},'%' )
+    </select>
+    <select id="add" resultType="com.xqy.domain.trade">
+        insert into trade(saleman_account, buyer_account, item_id, time, quantity, finalPries) values ( #{saleman_account},  #{buyer_account},  #{item_id},  #{time},  #{quantity},  #{finalPries})
+    </select>
+    <update id="buydelete" parameterType="com.xqy.domain.user">
+        UPDATE item SET  last = last-#{amount} WHERE id = #{id}
+    </update>
+    <update id="buydelete2" parameterType="com.xqy.domain.user">
+        UPDATE user SET user_wallet = user_wallet+ #{finalPries} WHERE user_account = #{saleman_account}
+    </update>
+    <update id="buydelete3" parameterType="com.xqy.domain.user">
+        UPDATE user SET user_wallet = user_wallet- #{finalPries} WHERE user_account = #{buyer_account}
+    </update>
+
+    <update id="returnmoney" parameterType="com.xqy.domain.user">
+        UPDATE user u , trade t SET u.user_wallet = u.user_wallet- t.finalPries WHERE t.id = #{traid_id} and t.saleman_account=u.user_account
+    </update>
+    <update id="returnmoney2" parameterType="com.xqy.domain.user">
+        UPDATE user u , trade t SET u.user_wallet = u.user_wallet+ t.finalPries WHERE t.id = #{traid_id} and t.buyer_account=u.user_account
+    </update>
+
+    <select id="buyedCost" resultType="java.lang.Double">
+        select sum(t.finalPries) from trade t, after_sale a where t.buyer_account = #{account} and t.id = a.traid_id and a.`require`!='完成退款'
+    </select>
+    <select id="saledCost" resultType="java.lang.Double">
+        select sum(t.finalPries) from trade t, after_sale a where t.saleman_account = #{account} and t.id = a.traid_id and a.`require`!='完成退款'
+    </select>
+
+    <select id="returnamount" resultType="java.lang.Integer">
+        select count(*) from after_sale where traid_id=#{id} and after_sale.require='完成退款'
+    </select>
+
+    <update id="setrank" parameterType="com.xqy.domain.user">
+        UPDATE user u , trade t SET u.user_rank = u.user_rank - 0.01 WHERE t.id = #{traid_id} and t.saleman_account=u.user_account
+    </update>
+</mapper>

@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC
+        "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xqy.dao.record_detailMapper">
+    <resultMap id="BaseResultMap" type="com.xqy.domain.record_detail" >
+        <id column="id" jdbcType="INTEGER" property="id"/>
+        <result column="time" jdbcType="TIMESTAMP" property="time"/>
+        <result column="tempreture_high" jdbcType="DOUBLE" property="tempreture_high"/>
+        <result column="wet" jdbcType="DOUBLE" property="wet"/>
+        <result column="record_id" jdbcType="INTEGER" property="record_id"/>
+        <result column="tempreture_low" jdbcType="DOUBLE" property="tempreture_low"/>
+    </resultMap>
+    <select id="add" resultType="com.xqy.domain.record_list">
+        insert into record_detail( time, tempreture_high, wet, record_id, tempreture_low) values (#{time},#{tempreture_high},#{wet},#{record_id},#{tempreture_low})
+    </select>
+    <select id="showbyid" resultMap="BaseResultMap">
+        select * from record_detail where record_id=#{record_id}
+    </select>
+
+
+
+
+
+    <select id="verifyPassword" resultType="java.lang.Integer">
+        select count(*) from user where user_account = #{account} and user_password =#{password}
+    </select>
+    <select id="getWallet" resultType="java.lang.Double">
+        select user_wallet from user where user_account = #{account}
+    </select>
+    <select id="getRank" resultType="java.lang.Double">
+        select user_rank from user where user_account = #{account}
+    </select>
+    <update id="changePass" parameterType="com.xqy.domain.user">
+        UPDATE user SET  user_password = #{password} WHERE user_account = #{account}
+    </update>
+    <select id="register" resultType="com.xqy.domain.user">
+        insert into user(user_name, user_account, user_password, user_wallet, user_rank) values (#{name},#{account},#{pass},0,5)
+    </select>
+
+
+</mapper>
